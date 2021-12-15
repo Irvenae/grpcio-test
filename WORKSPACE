@@ -18,12 +18,27 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_python/releases/download/0.5.0/rules_python-0.5.0.tar.gz"],
 )
 
-load("@rules_python//python:pip.bzl", "pip_install")
-
-PYTHON_INTERPRETER = "python3.7"
-
-pip_install(
-    name = "pip_deps",
-    requirements = "//:requirements.txt",
-    python_interpreter = PYTHON_INTERPRETER,
+http_archive(
+    name = "rules_proto_grpc",
+    sha256 = "28724736b7ff49a48cb4b2b8cfa373f89edfcb9e8e492a8d5ab60aa3459314c8",
+    strip_prefix = "rules_proto_grpc-4.0.1",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/4.0.1.tar.gz"],
 )
+
+http_archive(
+    name = "com_github_grpc_grpc",
+    urls = [
+        "https://github.com/grpc/grpc/archive/v1.41.1.tar.gz",
+    ],
+    strip_prefix = "grpc-1.41.1",
+    sha256 = "12a4a6f8c06b96e38f8576ded76d0b79bce13efd7560ed22134c2f433bc496ad",
+)
+
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_proto_grpc_toolchains")
+load("@rules_proto_grpc//python:repositories.bzl", rules_proto_grpc_python_repos = "python_repos")
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+rules_proto_grpc_toolchains()
+rules_proto_grpc_repos()
+rules_proto_grpc_python_repos()
+grpc_deps()
